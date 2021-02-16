@@ -1,0 +1,11 @@
+{
+  "name": "slictionary-bsv",
+  "version": "1.1.8",
+  "description": "This is the SLictionary package that contains bsv-related modules",
+  "main": "index.js",
+    "author": "johndifelice",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
