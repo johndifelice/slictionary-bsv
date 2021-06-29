@@ -1,5 +1,6 @@
 "use strict";
 
+//GOOGLE_APPLICATION_CREDENTIALS
 const axios = require("axios");
 const bsv = require("bsv");
 const {Forge} = require("txforge");
@@ -11,9 +12,8 @@ const _privKey = "L1FJLDZWMrBR7JmXKPCfzrUZahBWqLdPaGnDjWQJLJFXAKmvp67V";
 const privKey = new bsv.PrivKey().fromString(_privKey);
 const keyPair = new bsv.KeyPair().fromPrivKey(privKey);
 
-module.exports = { 
-    
-    getBSVexchangeRate:async function(){
+    //const addBounty = async(
+    const getBSVexchangeRate = async() => {
         let rate = 0;
         let jsonRate = "";
 
@@ -25,10 +25,10 @@ module.exports = {
         }
 
         return rate;
-    },
+    }
 
 
-    getUtxoBalance:async function(fromAddress) {
+    const getUtxoBalance = async(fromAddress) => {
         return new Promise(resolve => {
             setTimeout(() => {
                 https.get(`https://api.mattercloud.net/api/v3/main/address/${fromAddress.toString()}/utxo`, (res) => {
@@ -45,13 +45,14 @@ module.exports = {
 
             },2000);
         });
-    },
+    }
 
 
-    getUTXOs:async function(address){
+    const getUTXOs = async(address) => {
         return new Promise(resolve => {
             setTimeout(() => {
                 let utxos;
+                const fromAddress = "1AMzdZFfkJC7PnxXQndCPKp2q2v8TZSW9E"
                 https.get(`https://api.mattercloud.net/api/v3/main/address/${fromAddress.toString()}/utxo`, (res) => {
                     let data = '';
                     res.on('data',(chunk) => {
@@ -69,10 +70,10 @@ module.exports = {
                 });    
             },2000);
         });
-    },
+    }
 
 
-    sendPayment:async function(_toAddress, _satAmount, _opReturn){
+    const sendPayment = async(_toAddress, _satAmount, _opReturn) => {
         var opReturn = _opReturn;
         var toAddress = _toAddress;
         var satAmount = _satAmount;
@@ -102,9 +103,45 @@ module.exports = {
             },2000);    
         })
     }
+
+    const getRawTx = async(_fromAddress, _toAddress, _satAmount, _opReturn) => {
+        //var opReturn = _opReturn;
+        //var toAddress = _toAddress;
+        //var satAmount = _satAmount;
+        
+        return new Promise(resolve => {
+            setTimeout(() => {
+                //const fromAddress = "1AMzdZFfkJC7PnxXQndCPKp2q2v8TZSW9E";
+
+                https.get(`https://api.mattercloud.net/api/v3/main/address/${_fromAddress}/utxo`, (res) => {
+                    let data = '';
+                    res.on('data',(chunk) => {
+                        data += chunk;
+                    });
+
+                    res.on('end', () => {
+                        let utxos = JSON.parse(data); // these are the utxos
+                        let rawTx = buildForge(utxos, _toAddress, _satAmount, _opReturn);
+                        resolve(rawTx);
+                    });    
+
+                    res.on('error', error => {
+                        console.error(error)
+                    })
+                });
+                
+            },2000);    
+        })
     }
 
-    function postRawTx(rawTx){
+    const getAddress = async(walletUserName) => {
+        let jsonAddress = await axios.get('https://api.polynym.io/getAddress/' + walletUserName);
+    
+        return jsonAddress["address"];
+    }
+
+
+    const postRawTx = async(rawTx) => {
         // Send rawTransaction to WhatsOnChain
         const https = require('https');
 
@@ -140,7 +177,7 @@ module.exports = {
         req.end()
     }
 
-    function buildForge(_utxo, _toAddress, _satAmount, _opReturn){
+    const buildForge = async(_utxo, _toAddress, _satAmount, _opReturn) => {
         const opReturnKey = "19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut";
         const privKey = new bsv.PrivKey().fromString(_privKey);
         const keyPair = new bsv.KeyPair().fromPrivKey(privKey);
@@ -163,3 +200,6 @@ module.exports = {
         
         return forge.tx.toHex();
 }
+
+export{getAddress, sendPayment, getUTXOs, getUtxoBalance, getBSVexchangeRate,
+        getRawTx}

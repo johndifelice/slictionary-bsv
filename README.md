@@ -1,4 +1,7 @@
 ### Modules
+### getAddress
+Retrieves the address for the given moneybutton paymail address or handcash handle.
+
 ### getBSVexchangeRate
 Retrieves the lastest BSV-USD exchange rate from the WhatsOnChain api.
 

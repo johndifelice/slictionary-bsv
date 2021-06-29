@@ -1,7 +1,7 @@
 {
-  "name": "slictionary-bsv",
-  "version": "1.1.11",
-  "description": "This is the SLictionary package that contains bsv-related modules",
+  "name": "slictionary-bsv-mod",
+  "version": "1.0.0",
+  "description": "This is the SLictionary package that contains bsv-related modules.",
   "main": "index.js",
   "author": "johndifelice",
   "license": "ISC",
