@@ -104,35 +104,43 @@ const keyPair = new bsv.KeyPair().fromPrivKey(privKey);
         })
     }
 
-    const getRawTx = async(_fromAddress, _toAddress, _satAmount, _opReturn) => {
-        //var opReturn = _opReturn;
-        //var toAddress = _toAddress;
-        //var satAmount = _satAmount;
-        
-        return new Promise(resolve => {
-            setTimeout(() => {
-                //const fromAddress = "1AMzdZFfkJC7PnxXQndCPKp2q2v8TZSW9E";
+    const getRawTx = async(_utxos, _toAddress, _satAmount, _opReturn) => {
 
-                https.get(`https://api.mattercloud.net/api/v3/main/address/${_fromAddress}/utxo`, (res) => {
-                    let data = '';
-                    res.on('data',(chunk) => {
-                        data += chunk;
-                    });
-
-                    res.on('end', () => {
-                        let utxos = JSON.parse(data); // these are the utxos
-                        let rawTx = buildForge(utxos, _toAddress, _satAmount, _opReturn);
-                        resolve(rawTx);
-                    });    
-
-                    res.on('error', error => {
-                        console.error(error)
-                    })
-                });
-                
-            },2000);    
-        })
+        let rawTx = buildForge(_utxos, _toAddress, _satAmount, _opReturn);
+    
+        return rawTx;
     }
+
+
+    // const getRawTx = async(_fromAddress, _toAddress, _satAmount, _opReturn) => {
+    //     //var opReturn = _opReturn;
+    //     //var toAddress = _toAddress;
+    //     //var satAmount = _satAmount;
+        
+    //     return new Promise(resolve => {
+    //         setTimeout(() => {
+    //             //const fromAddress = "1AMzdZFfkJC7PnxXQndCPKp2q2v8TZSW9E";
+
+    //             https.get(`https://api.mattercloud.net/api/v3/main/address/${_fromAddress}/utxo`, (res) => {
+    //                 let data = '';
+    //                 res.on('data',(chunk) => {
+    //                     data += chunk;
+    //                 });
+
+    //                 res.on('end', () => {
+    //                     let utxos = JSON.parse(data); // these are the utxos
+    //                     let rawTx = buildForge(utxos, _toAddress, _satAmount, _opReturn);
+    //                     resolve(rawTx);
+    //                 });    
+
+    //                 res.on('error', error => {
+    //                     console.error(error)
+    //                 })
+    //             });
+                
+    //         },2000);    
+    //     })
+    // }
 
     const getAddress = async(walletUserName) => {
         let jsonAddress = await axios.get('https://api.polynym.io/getAddress/' + walletUserName);
